@@ -10,7 +10,6 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
-  parser: "babel-eslint",
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module'
@@ -71,8 +70,6 @@ module.exports = {
       "error",
       "single"
     ],
-    "semi": [
-      "error"
-    ],
+    "semi": 0,
   }
 }
