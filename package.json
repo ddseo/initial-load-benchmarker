@@ -1,0 +1,28 @@
+{
+  "name": "initial-load-benchmarker",
+  "version": "1.0.0",
+  "description": "Measure the first-time load speed for dev.mensio.com. Used to measure the impact of bundling policy on performance.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ddseo@github.com/ddseo/initial-load-benchmarker.git"
+  },
+  "author": "Derek Seo",
+  "license": "UNLICENSED",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/ddseo/initial-load-benchmarker/issues"
+  },
+  "homepage": "https://github.com/ddseo/initial-load-benchmarker#readme",
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}
