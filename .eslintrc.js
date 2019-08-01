@@ -70,6 +70,7 @@ module.exports = {
       "error",
       "single"
     ],
-    "semi": 0,
+    "semi": [1, "always"],
+    "handle-callback-err": 0,
   }
 }
