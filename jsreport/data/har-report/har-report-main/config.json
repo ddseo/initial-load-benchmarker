@@ -1,0 +1,21 @@
+{
+    "shortid": "SklG9CAg7S",
+    "name": "har-report-main",
+    "recipe": "chrome-pdf",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "folder": {
+        "shortid": "rR_yZ3f"
+    },
+    "creationDate": "2019-08-01T21:50:34.735Z",
+    "modificationDate": {
+        "$$date": 1564698012006
+    },
+    "_id": "v2jxtmAV1iCttv3V",
+    "$entitySet": "templates",
+    "data": {
+        "shortid": "Sylu2J1ZXH"
+    }
+}

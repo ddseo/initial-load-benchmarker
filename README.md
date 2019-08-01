@@ -7,12 +7,7 @@ $ npm i
 ```
 
 ## Usage
-First start a headless instance of chrome with debug port set to `9222`.
-There's a script set up to do this with OSX:
+Run the benchmark with:
 ```
-$ npm run headless-chrome
-```
-Once the chrome instance is running, run the benchmark with:
-```
-$ npm run benchmarker
+$ npm run benchmarker --url URLNAME --sampleSize SAMPLESIZE
 ```

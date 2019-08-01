@@ -16,11 +16,11 @@ const getPagerefToEntries = (har, pagerefs) => {
   return pagerefToEntries;
 };
 
-const getPagerefToLoadTime = (har, pagerefToEntries) => {
-  const pagerefToLoadTime = {};
+const getPagerefToNetworkLoadTime = (har, pagerefToEntries) => {
+  const pagerefToNetworkLoadTime = {};
   har.log.pages.forEach(page => {
     const entries = pagerefToEntries[page.id];
-    const startTime = page.startedDateTime;
+    const startTime = new Date(page.startedDateTime);
     let maxLoadFinishTime = -1;
 
     entries.forEach(entry => {
@@ -29,25 +29,25 @@ const getPagerefToLoadTime = (har, pagerefToEntries) => {
       maxLoadFinishTime = currLoadFinishTime > maxLoadFinishTime ? currLoadFinishTime : maxLoadFinishTime;
     });
 
-    pagerefToLoadTime[page.id] = maxLoadFinishTime - startTime;
+    pagerefToNetworkLoadTime[page.id] = maxLoadFinishTime - startTime;
   });
 
-  return pagerefToLoadTime;
+  return pagerefToNetworkLoadTime;
 };
 
-const processHar = har => {
+const generateOutput = har => {
   const pagerefs = har.log.pages.map(page => page.id);
   const pagerefToEntries = getPagerefToEntries(har, pagerefs);
-  const pagerefToLoadTime = getPagerefToLoadTime(har, pagerefToEntries);
+  const pagerefToNetworkLoadTime = getPagerefToNetworkLoadTime(har, pagerefToEntries);
   const json = JSON.stringify(har, null, 4);
   const output = process.stdout;
   output.write(json);
   output.write('\n');
   let counter = 0;
-  Object.keys(pagerefToLoadTime).forEach(pageref => {
-    output.write(`sample ${counter++}: ${pagerefToLoadTime[pageref]} ms\n`);
+  Object.keys(pagerefToNetworkLoadTime).forEach(pageref => {
+    output.write(`sample ${counter++}: ${pagerefToNetworkLoadTime[pageref]} ms\n`);
   });
   output.write('\n');
 };
 
-module.exports = processHar;
+module.exports = generateOutput;
