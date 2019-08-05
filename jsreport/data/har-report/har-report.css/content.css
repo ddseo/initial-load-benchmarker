@@ -6,7 +6,7 @@ body {
     line-height: inherit;
     text-align: left;
 }
-.invoice-box table td {
+.metricsTable td {
     padding: 5px;
     vertical-align: top;
 }
@@ -17,23 +17,4 @@ body {
 }
 .metricsTable tbody tr {
     border-bottom: 1px solid #eee;
-}
-.invoice-box table tr.item.last td {
-    border-bottom: none;
-}
-.invoice-box table tr.total td:nth-child(2) {
-    border-top: 2px solid #eee;
-    font-weight: bold;
-}
-@media only screen and (max-width: 600px) {
-    .invoice-box table tr.top table td {
-        width: 100%;
-        display: block;
-        text-align: center;
-    }
-    .invoice-box table tr.information table td {
-        width: 100%;
-        display: block;
-        text-align: center;
-    }
 }

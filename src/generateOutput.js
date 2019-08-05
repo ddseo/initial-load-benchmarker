@@ -41,13 +41,30 @@ const generateOutput = har => {
   const pagerefToNetworkLoadTime = getPagerefToNetworkLoadTime(har, pagerefToEntries);
   const json = JSON.stringify(har, null, 4);
   const output = process.stdout;
-  output.write(json);
-  output.write('\n');
+  // output.write(json);
+  // output.write('\n');
   let counter = 0;
+  let networkLoadTimeSum = 0;
   Object.keys(pagerefToNetworkLoadTime).forEach(pageref => {
+    networkLoadTimeSum += pagerefToNetworkLoadTime[pageref];
     output.write(`sample ${counter++}: ${pagerefToNetworkLoadTime[pageref]} ms\n`);
   });
-  output.write('\n');
+
+  const averageNetworkLoadTime = networkLoadTimeSum / counter;
+  output.write(`average: ${averageNetworkLoadTime}\n`);
+
+  let squaredDiffSum = 0;
+  Object.keys(pagerefToNetworkLoadTime).forEach(pageref => {
+    squaredDiffSum += (pagerefToNetworkLoadTime[pageref] - averageNetworkLoadTime) ** 2;
+  });
+  const stdDeviation = (squaredDiffSum / (counter - 1)) ** 0.5;
+  output.write(`σ: ${stdDeviation}`);
+
+  const createTmpData = require('./createTmpData');
+  createTmpData(pagerefToNetworkLoadTime);
+  // create report
+  // create avg har
+  // zip original har, report, and avg har, and serve it to whichever folder
 };
 
 module.exports = generateOutput;

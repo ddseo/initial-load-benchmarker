@@ -3,12 +3,13 @@
 const chCapturer = require('chrome-har-capturer');
 const chalk = require('chalk');
 const launchChrome = require('./launchHeadlessChrome');
+const ora = require('ora');
 const argv = require('yargs')
   .options({
     sampleSize: {
       alias       : 'samples',
       description : 'Number of trials for which to ping the target site',
-      type        : 'boolean',
+      type        : 'number',
       default     : 1,
     },
     url: {
@@ -39,22 +40,38 @@ const prettifyUrl = url => {
   }
 };
 
+const createSpinnerText = (prettifiedUrl, urlIndex) =>
+  `${prettifyUrl(url)} | ${urlIndex}/${sampleSize} completed`;
+
 launchChrome().then(chrome => {
   let allPingsSuccessful = true;
+  const prettifiedUrl = prettifyUrl(url);
+  const spinnerOptions = {
+    text    : createSpinnerText(prettifiedUrl, 0),
+    spinner : 'growVertical',
+  };
+  const spinner = ora(spinnerOptions).start(); // default writes to stderr
   // CHC uses a new browser context for each visit
   // This means the cache will be clear for each visit.
   // We can set the options param to { cache: false } if we want to test speed with caching (which I don't)
   chCapturer.run(urlsArray, {})
-    .on('load', url => process.stderr.write(`- ${prettifyUrl(url)} `))
-    .on('done', url => console.error(chalk.green('✓\n')))
+    .on('load', url => {})
+    .on('done', (url, index) => {
+      spinner.text = createSpinnerText(prettifiedUrl, index);
+    })
     .on('fail', (url, err) => {
-      console.error(chalk.red(`✗\n  ${err.message}\n`));
+      console.error(chalk.red(`✗\n  ${err.message}`));
       allPingsSuccessful = false;
     })
     .on('har', har => { // This callback triggers when ALL the urls are done processing, with one har file containing all the results.
       if (allPingsSuccessful) {
+        spinner.succeed(`${createSpinnerText(prettifiedUrl, sampleSize)}. Results:`);
         const generateOutput = require('./generateOutput');
         generateOutput(har);
+      } else {
+        spinner.fail('One or more URL loads failed. Result generation cancelled.');
       }
+      process.stderr.write('\n');
+      chrome.kill();
     });
 });

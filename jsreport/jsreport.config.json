@@ -15,7 +15,7 @@
       "strategy": "http-server"
     },
     "sample-template": {
-      "createSamples": true
+      "createSamples": false
     }
   },
   "httpPort": 5488,
@@ -26,6 +26,7 @@
     "provider": "fs"
   },
   "logger": {
+    "silent": true,
     "console": {
       "transport": "console",
       "level": "debug"
