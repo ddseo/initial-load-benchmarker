@@ -15,7 +15,7 @@ const argv = require('yargs')
     url: {
       description : 'URL under test',
       type        : 'string',
-      default     : 'https://dev.mensio.com',
+      default     : 'https://example.com',
     },
   })
   .help()
