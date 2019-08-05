@@ -9,5 +9,5 @@ $ npm i
 ## Usage
 Run the benchmark with:
 ```
-$ npm run benchmarker --url URLNAME --sampleSize SAMPLESIZE
+$ npm run benchmarker -- --url URLNAME --sampleSize SAMPLESIZE
 ```
