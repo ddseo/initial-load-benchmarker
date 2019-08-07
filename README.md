@@ -19,3 +19,8 @@ Note: if you get an error similar to `-bash: benchmark: command not found`, your
 ```
 $ npm run benchmark -- --url URLNAME --sampleSize SAMPLESIZE
 ```
+Options which can be provided:
+
+    --url <URL>                             URL to test
+    --samples, --sampleSize <sampleSize>    Number of times to load the URL
+    --printHar,                             Flag to print the HAR file to stderr
