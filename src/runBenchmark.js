@@ -1,8 +1,8 @@
-'use strict';
+#! /usr/bin/env node
+const launchChrome = require('./utils/launchHeadlessChrome');
 
 const chCapturer = require('chrome-har-capturer');
 const chalk = require('chalk');
-const launchChrome = require('./launchHeadlessChrome');
 const ora = require('ora');
 const argv = require('yargs')
   .options({
@@ -10,7 +10,7 @@ const argv = require('yargs')
       alias       : 'samples',
       description : 'Number of trials for which to ping the target site',
       type        : 'number',
-      default     : 1,
+      default     : 5,
     },
     url: {
       description : 'URL under test',

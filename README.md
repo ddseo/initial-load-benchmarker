@@ -1,15 +1,20 @@
 # initial-load-benchmarker
-Measures the first-time load speed for dev.mensio.com. Used to measure the impact of bundling policy on performance.
+CLI to measure the first-time load speed and related metrics for any website. Originally created to measure the impact of bundling policy on performance.
 
 Currently, results are directly outputted to the CLI. In the future, may add support for automatic generation of infographics and reports.
 
 ## Setup
 ```
+$ git checkout https://github.com/ddseo/initial-load-benchmarker.git
 $ npm i
 ```
 
 ## Usage
 Run the benchmark with:
 ```
-$ npm run benchmarker -- --url URLNAME --sampleSize SAMPLESIZE
+$ benchmark --url URLNAME --sampleSize SAMPLESIZE
+```
+Note: if you get an error similar to `-bash: benchmark: command not found`, your npm `$PATH` is likely misconfigured. Fix it or just use the following:
+```
+$ npm run benchmark -- --url URLNAME --sampleSize SAMPLESIZE
 ```

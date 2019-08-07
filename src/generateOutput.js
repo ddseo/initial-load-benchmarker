@@ -1,67 +1,82 @@
-'use strict';
+const {
+  getPagerefsFromHar,
+  getPagerefToEntries,
+} = require('./utils/har');
+const metricMetas = require('./utils/metricMetas');
 
-// So for each ping:
-// - parse the har file to get the data points (time for all network reqs to complete)
-// - put the data into whichever format and generate whatever infographics
-// - export the .har
+/**
+ * retrieveMetrics
+ *
+ * parses object sent by api into format we use or
+ * parses object format we use into format to send to backend
+ *
+ * @param {array} metricMetas - array of objects of form
+ * { label: string, getMetricForPageref: function(pageref, har, pagerefToEntries)}
+ * @param {object} har
+ * @param {object} pagerefToEntries
+ *
+ * @returns {object} metricsData - array of objects of form:
+ * {label: string, average: number, stdDeviation: number, values: array[numbers]}
+ */
+const retrieveMetrics = (metricMetas, har, pagerefToEntries) => {
+  const pagerefs = getPagerefsFromHar(har);
+  const sampleSize = pagerefs.length;
 
-const getPagerefToEntries = (har, pagerefs) => {
-  const pagerefToEntries = {};
-  pagerefs.forEach(pageref => {
-    pagerefToEntries[pageref] = [];
+  return metricMetas.map(({
+    label,
+    getMetricForPageref,
+  }) => {
+    const values = pagerefs.map(pageref => getMetricForPageref(pageref, har, pagerefToEntries));
+    const sum = values.reduce((a, b) => a + b);
+    const avg = sum / sampleSize;
+    const squaredDiffSum = values.reduce((a, b) => a + (b - avg) ** 2, 0);
+    const stdDeviation = (squaredDiffSum / (sampleSize - 1)) ** 0.5;
+    return {
+      label,
+      values,
+      avg,
+      stdDeviation,
+    };
   });
-  har.log.entries.forEach(entry => {
-    pagerefToEntries[entry.pageref].push(entry);
-  });
-  return pagerefToEntries;
 };
 
-const getPagerefToNetworkLoadTime = (har, pagerefToEntries) => {
-  const pagerefToNetworkLoadTime = {};
-  har.log.pages.forEach(page => {
-    const entries = pagerefToEntries[page.id];
-    const startTime = new Date(page.startedDateTime);
-    let maxLoadFinishTime = -1;
+const writeMetricsDataToOutput = (metricsData, output = process.stdout) => {
+  const writeWithDashedIndents = (numIndents, stringWithoutNewline) => {
+    output.write(`${' '.repeat(2 * numIndents)}${stringWithoutNewline}\n`);
+  };
 
-    entries.forEach(entry => {
-      const currLoadFinishTime = new Date(entry.startedDateTime);
-      currLoadFinishTime.setMilliseconds(currLoadFinishTime.getMilliseconds() + entry.time);
-      maxLoadFinishTime = currLoadFinishTime > maxLoadFinishTime ? currLoadFinishTime : maxLoadFinishTime;
-    });
+  const printMetricDatum = (label, value) => {
+    writeWithDashedIndents(2, `${label.padEnd(5)}: ${value.toFixed(3).toString().padStart(9)}`);
+  };
 
-    pagerefToNetworkLoadTime[page.id] = maxLoadFinishTime - startTime;
+  output.write('RESULTS:\n');
+  metricsData.forEach(({
+    label,
+    values,
+    avg,
+    stdDeviation,
+  }) => {
+    writeWithDashedIndents(1, `${label}:`);
+    printMetricDatum('avg', avg);
+    printMetricDatum('σ', stdDeviation);
+    // print values array?
   });
-
-  return pagerefToNetworkLoadTime;
 };
 
 const generateOutput = har => {
-  const pagerefs = har.log.pages.map(page => page.id);
+  const pagerefs = getPagerefsFromHar(har);
   const pagerefToEntries = getPagerefToEntries(har, pagerefs);
-  const pagerefToNetworkLoadTime = getPagerefToNetworkLoadTime(har, pagerefToEntries);
-  const json = JSON.stringify(har, null, 4);
   const output = process.stdout;
-  // output.write(json);
-  // output.write('\n');
-  let counter = 0;
-  let networkLoadTimeSum = 0;
-  Object.keys(pagerefToNetworkLoadTime).forEach(pageref => {
-    networkLoadTimeSum += pagerefToNetworkLoadTime[pageref];
-    output.write(`sample ${counter++}: ${pagerefToNetworkLoadTime[pageref]} ms\n`);
-  });
 
-  const averageNetworkLoadTime = networkLoadTimeSum / counter;
-  output.write(`average: ${averageNetworkLoadTime}\n`);
+  const json = JSON.stringify(har, null, 4);
+  output.write(json);
+  output.write('\n');
 
-  let squaredDiffSum = 0;
-  Object.keys(pagerefToNetworkLoadTime).forEach(pageref => {
-    squaredDiffSum += (pagerefToNetworkLoadTime[pageref] - averageNetworkLoadTime) ** 2;
-  });
-  const stdDeviation = (squaredDiffSum / (counter - 1)) ** 0.5;
-  output.write(`σ: ${stdDeviation}`);
+  const metricsData = retrieveMetrics(metricMetas, har, pagerefToEntries);
+  writeMetricsDataToOutput(metricsData, output);
 
-  const createTmpData = require('./createTmpData');
-  createTmpData(pagerefToNetworkLoadTime);
+  // const createTmpData = require('./createTmpData');
+  // createTmpData();
   // create report
   // create avg har
   // zip original har, report, and avg har, and serve it to whichever folder

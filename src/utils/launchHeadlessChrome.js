@@ -1,5 +1,3 @@
-'use strict';
-
 const chromeLauncher = require('chrome-launcher');
 const chalk = require('chalk');
 
