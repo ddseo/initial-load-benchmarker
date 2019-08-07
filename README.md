@@ -5,7 +5,8 @@ Currently, the resulting HAR file is outputted in the directory `initial-load-be
 
 ## Setup
 ```
-$ git checkout https://github.com/ddseo/initial-load-benchmarker.git
+$ git clone https://github.com/ddseo/initial-load-benchmarker.git
+$ cd initial-load-benchmarker
 $ npm i
 ```
 
