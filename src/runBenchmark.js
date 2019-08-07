@@ -17,6 +17,11 @@ const argv = require('yargs')
       type        : 'string',
       default     : 'https://example.com',
     },
+    printHar: {
+      description : 'Print the HAR JSON to stdout',
+      type        : 'boolean',
+      default     : false,
+    },
   })
   .help()
   .alias('help', 'h')
@@ -24,6 +29,7 @@ const argv = require('yargs')
 
 const sampleSize = argv.sampleSize;
 const url = argv.url; // TODO make this use a script argument if it's given
+const shouldPrintHar = argv.printHar;
 
 const urlsArray = new Array(sampleSize).fill(url);
 
@@ -64,10 +70,15 @@ launchChrome().then(chrome => {
       allPingsSuccessful = false;
     })
     .on('har', har => { // This callback triggers when ALL the urls are done processing, with one har file containing all the results.
+      har.log.creator = {
+        name    : 'Initial Load Benchmarker',
+        version : '0.1.0',
+        comment : '',
+      };
       if (allPingsSuccessful) {
         spinner.succeed(`${createSpinnerText(prettifiedUrl, sampleSize)}. Results:`);
         const generateOutput = require('./generateOutput');
-        generateOutput(har);
+        generateOutput(har, shouldPrintHar);
       } else {
         spinner.fail('One or more URL loads failed. Result generation cancelled.');
       }
