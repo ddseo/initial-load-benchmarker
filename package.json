@@ -1,13 +1,14 @@
 {
   "name": "initial-load-benchmarker",
   "version": "1.0.0",
-  "description": "Measure the first-time load speed for dev.mensio.com. Used to measure the impact of bundling policy on performance.",
+  "description": "A CLI to measure first-time load speed and related metrics for any website.",
   "main": "index.js",
   "bin": {
     "benchmark": "./src/runBenchmark.js"
   },
   "scripts": {
     "benchmark": "node src/runBenchmark.js",
+    "clean": "node src/utils/cleanBuilds.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

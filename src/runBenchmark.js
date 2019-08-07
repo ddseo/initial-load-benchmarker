@@ -72,7 +72,7 @@ launchChrome().then(chrome => {
     .on('har', har => { // This callback triggers when ALL the urls are done processing, with one har file containing all the results.
       har.log.creator = {
         name    : 'Initial Load Benchmarker',
-        version : '0.1.0',
+        version : '1.0.0',
         comment : '',
       };
       if (allPingsSuccessful) {
