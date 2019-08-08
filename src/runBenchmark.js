@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 const launchChrome = require('./utils/launchHeadlessChrome');
+const theme = require('./const/theme');
 
 const chCapturer = require('chrome-har-capturer');
 const chalk = require('chalk');

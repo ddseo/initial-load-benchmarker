@@ -16,7 +16,7 @@
     "url": "git+https://ddseo@github.com/ddseo/initial-load-benchmarker.git"
   },
   "author": "Derek Seo",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "bugs": {
     "url": "https://github.com/ddseo/initial-load-benchmarker/issues"
@@ -31,6 +31,7 @@
     "eslint-plugin-standard": "^4.0.0"
   },
   "dependencies": {
+    "canvas": "^2.5.0",
     "chalk": "^2.4.2",
     "chrome-har-capturer": "^0.13.5",
     "chrome-launcher": "^0.11.2",
@@ -41,6 +42,7 @@
     "jsreport-handlebars": "^2.0.2",
     "ora": "^3.4.0",
     "puppeteer": "^1.19.0",
+    "svg2png": "^4.1.1",
     "yargs": "^13.3.0"
   }
 }
