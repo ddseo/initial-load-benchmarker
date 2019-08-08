@@ -1,7 +1,7 @@
 const {
   getPagerefsFromHar,
   getPagerefToEntries,
-} = require('./utils/har');
+} = require('../utils/har');
 
 const createAverageHar = har => { // TODO
   const pagerefs = getPagerefsFromHar(har);

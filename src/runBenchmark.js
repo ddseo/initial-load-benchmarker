@@ -77,7 +77,7 @@ launchChrome().then(chrome => {
       };
       if (allPingsSuccessful) {
         spinner.succeed(`${createSpinnerText(prettifiedUrl, sampleSize)}. Results:`);
-        const generateOutput = require('./generateOutput');
+        const generateOutput = require('./process/generateOutput');
         generateOutput(har, shouldPrintHar);
       } else {
         spinner.fail('One or more URL loads failed. Result generation cancelled.');
