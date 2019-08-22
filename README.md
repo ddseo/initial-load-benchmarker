@@ -1,7 +1,7 @@
 # initial-load-benchmarker
 CLI to measure the first-time load speed and related metrics for any website. Originally created to measure the impact of bundling policy on performance.
 
-Currently, the resulting HAR file is outputted in the directory `initial-load-benchmarker/build`, and metrics are outputted directly to the CLI. In the future, may add support for automatic generation of infographics and reports.
+Currently, the resulting HAR file and related infographc(s) are outputted to an appropriate subdirectory of `initial-load-benchmarker/build`, and metrics are outputted directly to the CLI. The nature of the output is subject to change in the future.
 
 ## Setup
 ```
