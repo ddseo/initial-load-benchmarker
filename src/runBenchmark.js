@@ -1,10 +1,16 @@
 #! /usr/bin/env node
 const launchChrome = require('./utils/launchHeadlessChrome');
-const theme = require('./const/theme');
+const {
+  mutateCreator,
+} = require('./utils/har');
+const {
+  prettifyUrl,
+  createSpinnerText,
+  getSpinner,
+} = require('./utils/formatting');
 
 const chCapturer = require('chrome-har-capturer');
 const chalk = require('chalk');
-const ora = require('ora');
 const argv = require('yargs')
   .options({
     sampleSize: {
@@ -29,57 +35,36 @@ const argv = require('yargs')
   .argv;
 
 const sampleSize = argv.sampleSize;
-const url = argv.url; // TODO make this use a script argument if it's given
+const url = argv.url;
 const shouldPrintHar = argv.printHar;
 
+const prettifiedUrl = prettifyUrl(url);
 const urlsArray = new Array(sampleSize).fill(url);
-
-const prettifyUrl = url => {
-  try {
-    const { parse, format } = require('url');
-    const urlObject = parse(url);
-    urlObject.protocol = chalk.gray(urlObject.protocol.slice(0, -1));
-    urlObject.host = chalk.bold(urlObject.host);
-    return format(urlObject).replace(/[:/?=#]/g, chalk.gray('$&'));
-  } catch (err) {
-    // invalid URL delegate error detection
-    return url;
-  }
-};
-
-const createSpinnerText = (prettifiedUrl, urlIndex) =>
-  `${prettifyUrl(url)} | ${urlIndex}/${sampleSize} completed`;
 
 launchChrome().then(chrome => {
   let allPingsSuccessful = true;
-  const prettifiedUrl = prettifyUrl(url);
-  const spinnerOptions = {
-    text    : createSpinnerText(prettifiedUrl, 0),
-    spinner : 'growVertical',
-  };
-  const spinner = ora(spinnerOptions).start(); // default writes to stderr
-  // CHC uses a new browser context for each visit
-  // This means the cache will be clear for each visit.
+  const spinner = getSpinner(url, sampleSize);
+  // CHC uses a new browser context for each visit, so the cache will be clear for each visit.
   // We can set the options param to { cache: false } if we want to test speed with caching (which I don't)
-  chCapturer.run(urlsArray, {})
+  chCapturer.run(urlsArray, { abortOnFailure: true })
     .on('load', url => {})
     .on('done', (url, index) => {
-      spinner.text = createSpinnerText(prettifiedUrl, index);
+      spinner.text = createSpinnerText(prettifiedUrl, index, sampleSize);
     })
     .on('fail', (url, err) => {
       console.error(chalk.red(`✗\n  ${err.message}`));
       allPingsSuccessful = false;
     })
-    .on('har', har => { // This callback triggers when ALL the urls are done processing, with one har file containing all the results.
-      har.log.creator = {
-        name    : 'Initial Load Benchmarker',
-        version : '1.0.0',
-        comment : '',
-      };
+    .on('har', har => { // HAR always triggers on completion, either successful (all hars completed) or failure
+      mutateCreator(har);
       if (allPingsSuccessful) {
-        spinner.succeed(`${createSpinnerText(prettifiedUrl, sampleSize)}. Results:`);
+        spinner.succeed(`${createSpinnerText(prettifiedUrl, sampleSize, sampleSize)}. Results:`);
         const generateOutput = require('./process/generateOutput');
-        generateOutput(har, shouldPrintHar);
+        try {
+          generateOutput(har, shouldPrintHar);
+        } catch (err) {
+          console.error(chalk.red(`✗\n  ${err}`));
+        }
       } else {
         spinner.fail('One or more URL loads failed. Result generation cancelled.');
       }

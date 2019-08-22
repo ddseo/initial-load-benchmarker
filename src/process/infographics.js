@@ -1,9 +1,13 @@
 const D3Node = require('d3-node');
 const fs = require('fs');
 const svg2png = require('svg2png');
+const {
+  createOutputFileName,
+} = require('../utils/files');
 
-const createCharts = metricsData => {
-  generateHistogram(metricsData[0].values, './build/im_a_chart_lol.png');
+const createCharts = (metricsData, buildDirPath, url) => {
+  const networkResponseTimeFileName = createOutputFileName(url, 'network-load-graph', 'png');
+  generateHistogram(metricsData[0].values, `${buildDirPath}/${networkResponseTimeFileName}`);
 };
 
 const generateHistogram = (data, filePath) => {
@@ -13,7 +17,7 @@ const generateHistogram = (data, filePath) => {
   const margin = { top: 10, right: 30, bottom: 30, left: 40 };
   const width = 460 - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
-  const numberOfBins = Math.max(Math.floor(data.length * 0.6), 10);
+  const numberOfBins = Math.max(Math.floor(data.length * 0.6), 10); // this is fairly arbitrary - just used something that looks good
 
   const svg = d3n.createSVG(width + margin.left + margin.right, height + margin.top + margin.bottom)
     .append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -52,8 +56,7 @@ const generateHistogram = (data, filePath) => {
   const svgBuffer = Buffer.from(d3n.svgString(), 'utf-8');
   svg2png(svgBuffer)
     .then(buffer => fs.writeFileSync(filePath, buffer))
-    .catch(e => console.error('ERR:', e))
-    .then(err => console.log(`>> Exported: "${filePath}"`));
+    .catch(e => console.error('ERR:', e));
 };
 
 module.exports = {

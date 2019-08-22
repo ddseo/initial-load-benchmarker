@@ -4,7 +4,11 @@ const {
   getPagerefToEntries,
 } = require('../utils/har');
 const metricMetas = require('../utils/metricMetas');
-const createOutputFileName = require('../utils/createOutputFileName');
+const {
+  createBuildDirName,
+  createOutputFileName,
+  ensureDirExists,
+} = require('../utils/files');
 const {
   retrieveMetrics,
   writeMetricsDataToOutput,
@@ -17,17 +21,17 @@ const generateOutput = (har, shouldPrintHar) => {
   const pagerefToEntries = getPagerefToEntries(har, pagerefs);
   const output = process.stdout;
 
+  const buildDirParentPath = './build';
+  // ensureDirExists(buildDirParentPath);
+  const buildDirPath = `${buildDirParentPath}/${createBuildDirName(url)}`;
+  ensureDirExists(buildDirPath);
+
   const harJSON = JSON.stringify(har, null, 4);
   if (shouldPrintHar) {
     output.write(harJSON);
     output.write('\n');
   }
-
-  const buildDirPath = './build';
-  fs.mkdir(buildDirPath, { recursive: true }, (err) => {
-    if (err) throw err;
-  });
-  const harFileName = createOutputFileName(url, 'HAR');
+  const harFileName = createOutputFileName(url, 'HAR', 'har');
   // TODO change this to async if there's any meaninful parallel processing to do
   fs.writeFileSync(`${buildDirPath}/${harFileName}`, harJSON, err => {
     if (err) throw err;
@@ -35,7 +39,8 @@ const generateOutput = (har, shouldPrintHar) => {
 
   const metricsData = retrieveMetrics(metricMetas, har, pagerefToEntries);
   writeMetricsDataToOutput(metricsData, output);
-  createCharts(metricsData);
+  createCharts(metricsData, buildDirPath, url);
+  console.error(`>> Results exported to "${buildDirPath}/"`);
 };
 
 module.exports = generateOutput;

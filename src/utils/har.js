@@ -15,8 +15,17 @@ const getPagerefToEntries = har => {
 const getPageFromHar = (pageref, har) =>
   har.log.pages.find(page => page.id === pageref);
 
+const mutateCreator = har => {
+  har.log.creator = {
+    name    : 'Initial Load Benchmarker',
+    version : '1.0.0',
+    comment : '',
+  };
+};
+
 module.exports = {
   getPagerefsFromHar,
   getPagerefToEntries,
   getPageFromHar,
+  mutateCreator,
 };
