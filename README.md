@@ -25,7 +25,7 @@ Options which can be provided:
     
     
 ## Output
-Metrics printed to the command line:
+Metrics printed to the command line (average and standard deviation for all trials):
 
     Network Load time                       Time for all network requests to return
     DOMContentLoaded time                   Time for Chrome's DOMContentLoaded event to fire
