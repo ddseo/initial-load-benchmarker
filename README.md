@@ -1,8 +1,6 @@
 # initial-load-benchmarker
 CLI to measure the first-time load speed and related metrics for any website. Originally created to measure the impact of bundling policy on performance.
 
-Currently, the resulting HAR file and related infographc(s) are outputted to an appropriate subdirectory of `initial-load-benchmarker/build`, and metrics are outputted directly to the CLI. The nature of the output is subject to change in the future.
-
 ## Setup
 ```
 $ git clone https://github.com/ddseo/initial-load-benchmarker.git
@@ -24,3 +22,17 @@ Options which can be provided:
     --url <URL>                             URL to test
     --samples, --sampleSize <sampleSize>    Number of times to load the URL
     --printHar,                             Flag to print the HAR file to stderr
+    
+    
+## Output
+Metrics printed to the command line:
+
+    Network Load time                       Time for all network requests to return
+    DOMContentLoaded time                   Time for Chrome's DOMContentLoaded event to fire
+    
+Files created in a new subfolder of the `/build` directory:
+
+    HAR                                     Aggregate HAR file of all pings
+    Network Load Graph                      Histogram displaying Network Load time distribution
+
+Additional metrics and infographics can be generated - don't hesitate to ask if you need them
