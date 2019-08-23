@@ -22,7 +22,6 @@ const generateOutput = (har, shouldPrintHar) => {
   const output = process.stdout;
 
   const buildDirParentPath = './build';
-  // ensureDirExists(buildDirParentPath);
   const buildDirPath = `${buildDirParentPath}/${createBuildDirName(url)}`;
   ensureDirExists(buildDirPath);
 

@@ -1,4 +1,6 @@
 #! /usr/bin/env node
+const chCapturer = require('chrome-har-capturer');
+const chalk = require('chalk');
 const launchChrome = require('./scripts/launchHeadlessChrome');
 const {
   mutateCreator,
@@ -8,9 +10,6 @@ const {
   createSpinnerText,
   getSpinner,
 } = require('./utils/formatting');
-
-const chCapturer = require('chrome-har-capturer');
-const chalk = require('chalk');
 const argv = require('./utils/args');
 
 const sampleSize = argv.sampleSize;
