@@ -7,6 +7,7 @@ $ git clone https://github.com/ddseo/initial-load-benchmarker.git
 $ cd initial-load-benchmarker
 $ npm i
 ```
+Note: this tool requires node 10.12.0 or higher.
 
 ## Usage
 Run the benchmark with:
