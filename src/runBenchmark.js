@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-const launchChrome = require('./utils/launchHeadlessChrome');
+const launchChrome = require('./scripts/launchHeadlessChrome');
 const {
   mutateCreator,
 } = require('./utils/har');
@@ -11,28 +11,7 @@ const {
 
 const chCapturer = require('chrome-har-capturer');
 const chalk = require('chalk');
-const argv = require('yargs')
-  .options({
-    sampleSize: {
-      alias       : 'samples',
-      description : 'Number of trials for which to ping the target site',
-      type        : 'number',
-      default     : 5,
-    },
-    url: {
-      description : 'URL under test',
-      type        : 'string',
-      default     : 'https://example.com',
-    },
-    printHar: {
-      description : 'Print the HAR JSON to stdout',
-      type        : 'boolean',
-      default     : false,
-    },
-  })
-  .help()
-  .alias('help', 'h')
-  .argv;
+const argv = require('./utils/args');
 
 const sampleSize = argv.sampleSize;
 const url = argv.url;

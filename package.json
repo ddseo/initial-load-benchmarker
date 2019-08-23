@@ -8,7 +8,7 @@
   },
   "scripts": {
     "benchmark": "node src/runBenchmark.js",
-    "clean": "node src/utils/cleanBuilds.js",
+    "clean": "node src/scripts/cleanBuilds.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
